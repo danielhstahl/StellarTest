@@ -1,0 +1,14 @@
+{
+  "name": "stellartest",
+  "version": "1.0.0",
+  "description": "My first attempt to get used to developing in Stellar",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Daniel Stahl",
+  "license": "ISC",
+  "dependencies": {
+    "stellar-sdk": "^0.8.0"
+  }
+}
