@@ -4,11 +4,16 @@
   "description": "My first attempt to get used to developing in Stellar",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "createKey":"node ./scripts/createKey",
+    "generateTestAccount":"node ./scripts/generateTestNetAccount"
   },
   "author": "Daniel Stahl",
   "license": "ISC",
   "dependencies": {
     "stellar-sdk": "^0.8.0"
+  },
+  "devDependencies": {
+    "request": "^2.83.0"
   }
 }
