@@ -1,23 +1,26 @@
 const StellarSdk=require('stellar-sdk')
-const {publicKey, secret}=require('./secret.json')
+const primary=require('./keys/primary.json')
+const secondary=require('./keys/secondary.json')
 
 StellarSdk.Network.useTestNetwork()
 let server = new StellarSdk.Server('https://horizon-testnet.stellar.org')
-const sourceKeys = StellarSdk.Keypair
-  .fromSecret(secret)
-// the JS SDK uses promises for most actions, such as retrieving an account
-server.loadAccount(publicKey).then(account=>{
-  console.log('Balances for account: ' + publicKey)
-  account.balances.forEach(balance=>{
-    console.log('Type:', balance.asset_type, ', Balance:', balance.balance)
-  })
-})
+const sourceKeys = StellarSdk.Keypair.fromSecret(primary.secret)
+
+const checkAccount=accountKey=>{
+    return server.loadAccount(accountKey).then(account=>{
+        console.log('Balances for account: ' + accountKey)
+        account.balances.forEach(balance=>{
+            console.log('Type:', balance.asset_type, ', Balance:', balance.balance)
+        })
+        return 
+    })
+}
 
 const sendMoney=(destinationAccount, amount)=>{
-    server.loadAccount(destinationAccount).catch(StellarSdk.NotFoundError, err=>{
+    return server.loadAccount(destinationAccount).catch(StellarSdk.NotFoundError, err=>{
         throw new Error('Account does not exist!  You will not be charged a transaction fee')
     }).then(()=>{
-        return server.loadAccount(publicKey)
+        return server.loadAccount(primary.publicKey)
     }).then(account=>{
         let transaction=new StellarSdk.TransactionBuilder(account).addOperation(StellarSdk.Operation.payment({
             destination:destinationAccount,
@@ -32,3 +35,8 @@ const sendMoney=(destinationAccount, amount)=>{
         console.error('Something went wrong', err)
     })
 }
+
+checkAccount(primary.publicKey).then(()=>sendMoney(secondary.publicKey, '50')).then(()=>{
+    checkAccount(primary.publicKey)
+    checkAccount(secondary.publicKey)
+})
